@@ -2,6 +2,7 @@ import os,sys
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 from exception import CustomException
+from components.data_transformation import DataTranformation,DataTransformationConfig
 from logger import logging
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -24,7 +25,7 @@ class DataIngestion:
             df=pd.read_csv('notebook/data/stud.csv')
             
             logging.info("read the dataset as dataframe")
-            
+            print(os.path.dirname(self.ingestion_config.train_data_path))
             os.makedirs(os.path.dirname(self.ingestion_config.train_data_path),exist_ok=True)
             df.to_csv(self.ingestion_config.raw_data_path,index=True,header=True)
             logging.info("Train test split initiated")
@@ -43,6 +44,9 @@ class DataIngestion:
 
 if __name__=='__main__':
     obj = DataIngestion()
-    obj.initiate_data_ingestion()
+    train_data_path,test_data_path = obj.initiate_data_ingestion()
+    data_transformation = DataTranformation()
+    train_arr,test_arr,_ = data_transformation.initiate_data_transformation(train_data_path,test_data_path)
+    print(train_arr.shape,test_arr.shape)
 
 
